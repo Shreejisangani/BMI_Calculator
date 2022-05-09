@@ -1,8 +1,12 @@
+import 'package:bmi_calculator/calculator_brain.dart';
 import 'package:bmi_calculator/constants.dart';
+import 'package:bmi_calculator/input_widget/bottom_button.dart';
+import 'package:bmi_calculator/pages/result_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'input_widget/iconcontent.dart';
-import 'input_widget/reusable_card.dart';
+import '../input_widget/iconcontent.dart';
+import '../input_widget/reusable_card.dart';
+import '../input_widget/round_icon_btn.dart';
 
 enum genderType { male, female, other }
 
@@ -38,6 +42,8 @@ class _InputPageState extends State<InputPage> {
   // }
   genderType selectedGender = genderType.other;
   int height = 180;
+  int wight = 60;
+  int age = 19;
 
   @override
   Widget build(BuildContext context) {
@@ -117,18 +123,20 @@ class _InputPageState extends State<InputPage> {
                       //here we not need to change thumb style but future references i change it.
                       SliderTheme(
                         data: SliderTheme.of(context).copyWith(
-                          thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 15.0),
-                          overlayShape: const RoundSliderOverlayShape(overlayRadius: 30.0),
+                          thumbShape: const RoundSliderThumbShape(
+                              enabledThumbRadius: 15.0),
+                          overlayShape: const RoundSliderOverlayShape(
+                              overlayRadius: 30.0),
                           thumbColor: const Color(0xffeb1555),
                           activeTrackColor: Colors.white,
-                          overlayColor: const Color(0x29eb1555),  
+                          overlayColor: const Color(0x29eb1555),
                           inactiveTrackColor: const Color(0xff8d8e98),
                         ),
                         child: Slider(
                           value: height.toDouble(),
                           onChanged: (double newValue) {
                             setState(() {
-                              height=newValue.round();
+                              height = newValue.round();
                             });
                           },
                           // activeColor: const Color(0xffffffff),
@@ -148,18 +156,40 @@ class _InputPageState extends State<InputPage> {
                       onPress: () {},
                       colour: kActiveCardColour,
                       cardChild: Column(
-                        children: const [
-                          Icon(
-                            FontAwesomeIcons.mars,
-                            size: 80.0,
-                          ),
-                          SizedBox(
-                            height: 15.0,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Wight',
+                            style: kLabelTextStyle,
                           ),
                           Text(
-                            'Male',
-                            style: TextStyle(fontSize: 18.0),
-                          )
+                            wight.toString(),
+                            style: kNumberTextStyle,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              RoundIconButton(
+                                icon: FontAwesomeIcons.minus,
+                                onPressed: () {
+                                  setState(() {
+                                    wight--;
+                                  });
+                                },
+                              ),
+                              const SizedBox(
+                                width: 10.0,
+                              ),
+                              RoundIconButton(
+                                icon: FontAwesomeIcons.plus,
+                                onPressed: () {
+                                  setState(() {
+                                    wight++;
+                                  });
+                                },
+                              )
+                            ],
+                          ),
                         ],
                       ),
                     ),
@@ -169,18 +199,40 @@ class _InputPageState extends State<InputPage> {
                       onPress: () {},
                       colour: kActiveCardColour,
                       cardChild: Column(
-                        children: const [
-                          Icon(
-                            FontAwesomeIcons.mars,
-                            size: 80.0,
-                          ),
-                          SizedBox(
-                            height: 15.0,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Age',
+                            style: kLabelTextStyle,
                           ),
                           Text(
-                            'Male',
-                            style: TextStyle(fontSize: 18.0),
-                          )
+                            age.toString(),
+                            style: kNumberTextStyle,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              RoundIconButton(
+                                icon: FontAwesomeIcons.minus,
+                                onPressed: () {
+                                  setState(() {
+                                    age--;
+                                  });
+                                },
+                              ),
+                              const SizedBox(
+                                width: 10.0,
+                              ),
+                              RoundIconButton(
+                                icon: FontAwesomeIcons.plus,
+                                onPressed: () {
+                                  setState(() {
+                                    age++;
+                                  });
+                                },
+                              )
+                            ],
+                          ),
                         ],
                       ),
                     ),
@@ -188,13 +240,23 @@ class _InputPageState extends State<InputPage> {
                 ],
               ),
             ),
-            Container(
-              height: kBottomContainerHeight,
-              width: double.infinity,
-              margin: const EdgeInsets.only(top: 15.0),
-              color: kBottomContainerColour,
-              child: Text('Calculate',textAlign: TextAlign.center,style: kNumberTextStyle,),
-            ),
+            BottomButton(
+              buttonTitle: 'Calculate',
+              onTap: () {
+                CalculatorBrain calc =
+                    CalculatorBrain(height: height, weight: wight);
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) =>  ResultPage(
+                            bmiResult: calc.calculateBMI(),
+                            resultText: calc.getResult(),
+                            interpretation: calc.getInterpretation(),
+                          )),
+                );
+              },
+            )
           ],
         )
 
